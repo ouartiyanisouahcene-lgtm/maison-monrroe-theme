@@ -1,0 +1,539 @@
+{% comment %} Section: Formulaire de livraison Maison Monrroe {% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  .livraison-section {
+    font-family: 'DM Sans', sans-serif;
+    background: #F7F3EE;
+    padding: {{ section.settings.padding_top }}px 1rem {{ section.settings.padding_bottom }}px;
+  }
+  .livraison-inner {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .livraison-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 0.3rem;
+    color: #1C1917;
+  }
+  .livraison-sub {
+    text-align: center;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #78716C;
+    margin-bottom: 2rem;
+  }
+  .livraison-card {
+    background: #FDFAF7;
+    border: 0.5px solid #E2D9CE;
+    border-radius: 2px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .livraison-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #C9A96E, transparent);
+  }
+  .lv-section-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #C9A96E;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+  .lv-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  .lv-divider::before, .lv-divider::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: #C9A96E;
+    opacity: 0.4;
+  }
+  .lv-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+  .lv-field { margin-bottom: 1rem; }
+  .lv-field label {
+    display: block;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #78716C;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+  }
+  .lv-field input,
+  .lv-field select {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    background: #F7F3EE;
+    border: 0.5px solid #E2D9CE;
+    border-radius: 1px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #1C1917;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .lv-field input:focus,
+  .lv-field select:focus { border-color: #C9A96E; background: #fff; }
+  .lv-field input.lv-err,
+  .lv-field select.lv-err { border-color: #C0392B; }
+  .lv-errmsg { font-size: 0.65rem; color: #C0392B; margin-top: 0.2rem; display: none; }
+  .lv-errmsg.show { display: block; }
+  .lv-select-wrap { position: relative; }
+  .lv-select-wrap::after {
+    content: '›';
+    position: absolute;
+    right: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    color: #C9A96E;
+    pointer-events: none;
+    font-size: 1.1rem;
+  }
+  .lv-phone-wrap { display: flex; }
+  .lv-prefix {
+    padding: 0.7rem 0.8rem;
+    background: #E8D9BE;
+    border: 0.5px solid #E2D9CE;
+    border-right: none;
+    border-radius: 1px 0 0 1px;
+    font-size: 0.85rem;
+    color: #1C1917;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+  }
+  .lv-phone-wrap input { border-radius: 0 1px 1px 0; }
+  .lv-product-info {
+    background: #F7F3EE;
+    border: 0.5px solid #E2D9CE;
+    border-radius: 1px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .lv-product-info img {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+  .lv-product-name { font-size: 0.85rem; font-weight: 500; color: #1C1917; }
+  .lv-product-price { font-size: 0.78rem; color: #78716C; margin-top: 2px; }
+  .lv-submit {
+    width: 100%;
+    padding: 0.9rem;
+    background: #1C1917;
+    color: #F7F3EE;
+    border: none;
+    border-radius: 1px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.2s;
+  }
+  .lv-submit:hover { background: #2C2A27; }
+  .lv-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  .lv-note {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #78716C;
+    margin-top: 0.85rem;
+  }
+  .lv-success {
+    display: none;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .lv-success.show { display: block; }
+  .lv-success-icon {
+    width: 52px; height: 52px;
+    border: 1.5px solid #C9A96E;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+  }
+  .lv-success-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 0.4rem;
+    color: #1C1917;
+  }
+  .lv-success-sub { font-size: 0.82rem; color: #78716C; line-height: 1.6; }
+  .lv-summary {
+    margin-top: 1.25rem;
+    padding: 0.85rem 1rem;
+    background: #F7F3EE;
+    border: 0.5px solid #E2D9CE;
+    border-radius: 1px;
+    text-align: left;
+  }
+  .lv-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    padding: 0.25rem 0;
+    border-bottom: 0.5px solid #E2D9CE;
+  }
+  .lv-summary-row:last-child { border-bottom: none; }
+  .lv-summary-row span:first-child { color: #78716C; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .lv-summary-row span:last-child { font-weight: 500; color: #1C1917; }
+  select:disabled { opacity: 0.45; cursor: not-allowed; }
+</style>
+
+<section class="livraison-section" id="section-{{ section.id }}">
+  <div class="livraison-inner">
+    <div class="livraison-title">{{ section.settings.title }}</div>
+    <div class="livraison-sub">{{ section.settings.subtitle }}</div>
+
+    <div class="livraison-card">
+
+      {% comment %} Success overlay {% endcomment %}
+      <div class="lv-success" id="lv-success-{{ section.id }}">
+        <div class="lv-success-icon">
+          <svg width="22" height="22" fill="none" stroke="#C9A96E" stroke-width="1.5" viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="lv-success-title">Commande confirmée !</div>
+        <div class="lv-success-sub">Vos informations ont été reçues.<br>Nous vous contacterons très prochainement.</div>
+        <div class="lv-summary" id="lv-summary-{{ section.id }}"></div>
+      </div>
+
+      {% comment %} Form {% endcomment %}
+      <div id="lv-form-{{ section.id }}">
+
+        {% comment %} Product info {% endcomment %}
+        <div class="lv-product-info">
+          {%- if product.featured_image -%}
+            <img src="{{ product.featured_image | image_url: width: 120 }}" alt="{{ product.title }}">
+          {%- endif -%}
+          <div>
+            <div class="lv-product-name">{{ product.title }}</div>
+            <div class="lv-product-price">{{ product.price | money }}</div>
+          </div>
+        </div>
+
+        <div class="lv-section-label">Identité</div>
+
+        <div class="lv-row">
+          <div class="lv-field">
+            <label for="lv-prenom-{{ section.id }}">Prénom</label>
+            <input type="text" id="lv-prenom-{{ section.id }}" placeholder="Votre prénom" autocomplete="given-name">
+            <div class="lv-errmsg" id="lv-e-prenom-{{ section.id }}">Champ requis</div>
+          </div>
+          <div class="lv-field">
+            <label for="lv-nom-{{ section.id }}">Nom</label>
+            <input type="text" id="lv-nom-{{ section.id }}" placeholder="Votre nom" autocomplete="family-name">
+            <div class="lv-errmsg" id="lv-e-nom-{{ section.id }}">Champ requis</div>
+          </div>
+        </div>
+
+        <div class="lv-field">
+          <label for="lv-tel-{{ section.id }}">Numéro de téléphone</label>
+          <div class="lv-phone-wrap">
+            <div class="lv-prefix">🇩🇿 +213</div>
+            <input type="tel" id="lv-tel-{{ section.id }}" placeholder="05 XX XX XX XX" maxlength="10">
+          </div>
+          <div class="lv-errmsg" id="lv-e-tel-{{ section.id }}">Numéro invalide (10 chiffres)</div>
+        </div>
+
+        <div class="lv-divider"><span style="color:#C9A96E;font-size:.75rem">✦</span></div>
+        <div class="lv-section-label">Adresse de livraison</div>
+
+        <div class="lv-field">
+          <label for="lv-wilaya-{{ section.id }}">Wilaya</label>
+          <div class="lv-select-wrap">
+            <select id="lv-wilaya-{{ section.id }}" onchange="lvUpdateBaladia('{{ section.id }}')">
+              <option value="">— Sélectionnez votre wilaya —</option>
+              <option value="01 - Adrar">01 — Adrar</option>
+              <option value="02 - Chlef">02 — Chlef</option>
+              <option value="03 - Laghouat">03 — Laghouat</option>
+              <option value="04 - Oum El Bouaghi">04 — Oum El Bouaghi</option>
+              <option value="05 - Batna">05 — Batna</option>
+              <option value="06 - Béjaïa">06 — Béjaïa</option>
+              <option value="07 - Biskra">07 — Biskra</option>
+              <option value="08 - Béchar">08 — Béchar</option>
+              <option value="09 - Blida">09 — Blida</option>
+              <option value="10 - Bouira">10 — Bouira</option>
+              <option value="11 - Tamanrasset">11 — Tamanrasset</option>
+              <option value="12 - Tébessa">12 — Tébessa</option>
+              <option value="13 - Tlemcen">13 — Tlemcen</option>
+              <option value="14 - Tiaret">14 — Tiaret</option>
+              <option value="15 - Tizi Ouzou">15 — Tizi Ouzou</option>
+              <option value="16 - Alger">16 — Alger</option>
+              <option value="17 - Djelfa">17 — Djelfa</option>
+              <option value="18 - Jijel">18 — Jijel</option>
+              <option value="19 - Sétif">19 — Sétif</option>
+              <option value="20 - Saïda">20 — Saïda</option>
+              <option value="21 - Skikda">21 — Skikda</option>
+              <option value="22 - Sidi Bel Abbès">22 — Sidi Bel Abbès</option>
+              <option value="23 - Annaba">23 — Annaba</option>
+              <option value="24 - Guelma">24 — Guelma</option>
+              <option value="25 - Constantine">25 — Constantine</option>
+              <option value="26 - Médéa">26 — Médéa</option>
+              <option value="27 - Mostaganem">27 — Mostaganem</option>
+              <option value="28 - M'Sila">28 — M'Sila</option>
+              <option value="29 - Mascara">29 — Mascara</option>
+              <option value="30 - Ouargla">30 — Ouargla</option>
+              <option value="31 - Oran">31 — Oran</option>
+              <option value="32 - El Bayadh">32 — El Bayadh</option>
+              <option value="33 - Illizi">33 — Illizi</option>
+              <option value="34 - Bordj Bou Arréridj">34 — Bordj Bou Arréridj</option>
+              <option value="35 - Boumerdès">35 — Boumerdès</option>
+              <option value="36 - El Tarf">36 — El Tarf</option>
+              <option value="37 - Tindouf">37 — Tindouf</option>
+              <option value="38 - Tissemsilt">38 — Tissemsilt</option>
+              <option value="39 - El Oued">39 — El Oued</option>
+              <option value="40 - Khenchela">40 — Khenchela</option>
+              <option value="41 - Souk Ahras">41 — Souk Ahras</option>
+              <option value="42 - Tipaza">42 — Tipaza</option>
+              <option value="43 - Mila">43 — Mila</option>
+              <option value="44 - Aïn Defla">44 — Aïn Defla</option>
+              <option value="45 - Naâma">45 — Naâma</option>
+              <option value="46 - Aïn Témouchent">46 — Aïn Témouchent</option>
+              <option value="47 - Ghardaïa">47 — Ghardaïa</option>
+              <option value="48 - Relizane">48 — Relizane</option>
+              <option value="49 - El M'Ghair">49 — El M'Ghair</option>
+              <option value="50 - El Menia">50 — El Menia</option>
+              <option value="51 - Ouled Djellal">51 — Ouled Djellal</option>
+              <option value="52 - Bordj Baji Mokhtar">52 — Bordj Baji Mokhtar</option>
+              <option value="53 - Béni Abbès">53 — Béni Abbès</option>
+              <option value="54 - Timimoun">54 — Timimoun</option>
+              <option value="55 - Touggourt">55 — Touggourt</option>
+              <option value="56 - Djanet">56 — Djanet</option>
+              <option value="57 - In Salah">57 — In Salah</option>
+              <option value="58 - In Guezzam">58 — In Guezzam</option>
+            </select>
+          </div>
+          <div class="lv-errmsg" id="lv-e-wilaya-{{ section.id }}">Veuillez choisir une wilaya</div>
+        </div>
+
+        <div class="lv-field">
+          <label for="lv-baladia-{{ section.id }}">Baladia / Commune</label>
+          <div class="lv-select-wrap">
+            <select id="lv-baladia-{{ section.id }}" disabled>
+              <option value="">— Choisissez d'abord une wilaya —</option>
+            </select>
+          </div>
+          <div class="lv-errmsg" id="lv-e-baladia-{{ section.id }}">Veuillez choisir une commune</div>
+        </div>
+
+        <div class="lv-divider"><span style="color:#C9A96E;font-size:.75rem">✦</span></div>
+        <div class="lv-section-label">Détails de la commande</div>
+
+        <div class="lv-row">
+          <div class="lv-field">
+            <label for="lv-taille-{{ section.id }}">Taille</label>
+            <div class="lv-select-wrap">
+              <select id="lv-taille-{{ section.id }}">
+                <option value="">— Taille —</option>
+                {%- for variant in product.variants -%}
+                  {%- if variant.option1 -%}
+                    <option value="{{ variant.option1 }}">{{ variant.option1 }}</option>
+                  {%- endif -%}
+                {%- endfor -%}
+              </select>
+            </div>
+            <div class="lv-errmsg" id="lv-e-taille-{{ section.id }}">Champ requis</div>
+          </div>
+          <div class="lv-field">
+            <label for="lv-couleur-{{ section.id }}">Couleur</label>
+            <div class="lv-select-wrap">
+              <select id="lv-couleur-{{ section.id }}">
+                <option value="">— Couleur —</option>
+                {%- assign colors = product.variants | map: 'option2' | uniq -%}
+                {%- for color in colors -%}
+                  {%- if color != blank -%}
+                    <option value="{{ color }}">{{ color }}</option>
+                  {%- endif -%}
+                {%- endfor -%}
+              </select>
+            </div>
+            <div class="lv-errmsg" id="lv-e-couleur-{{ section.id }}">Champ requis</div>
+          </div>
+        </div>
+
+        <button class="lv-submit" id="lv-btn-{{ section.id }}" onclick="lvSubmit('{{ section.id }}', '{{ product.title | escape }}', '{{ product.url | prepend: shop.url }}', '{{ product.price | money_without_currency }}')">
+          Commander maintenant
+        </button>
+        <div class="lv-note">📦 Livraison disponible dans toute l'Algérie</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var WILAYAS = {"01 - Adrar":["Adrar","Aoulef","Timimoun","Bordj Badji Mokhtar","Zaouiet Kounta","Aïn Salah","Aougrout","Charouine","Reggane"],"02 - Chlef":["Chlef","Ténès","Benairia","El Karimia","Taougrite","Beni Haoua","Sendjas","Oued Fodda","Ouled Ben Abdelkader","Chettia","Ain Merane","Oued Sly","Abou el Hassan","El Marsa"],"03 - Laghouat":["Laghouat","Ksar El Hirane","Hassi Delaa","Hassi R'mel","Aïn Madhi","Tadjit","Beidha","Brida","Sidi Makhlouf","Oued Morra"],"04 - Oum El Bouaghi":["Oum El Bouaghi","Aïn Beïda","Aïn M'lila","Aïn Fakroun","Ksar Sbahi","Souk Naamane","Zorg","El Belala","Hanchir Toumghani"],"05 - Batna":["Batna","Barika","Aïn Touta","Tazoult","N'Gaous","Merouana","Seriana","El Madher","Ras El Aioun","Arris","Boumia","Djerma","Oued El Ma"],"06 - Béjaïa":["Béjaïa","Akbou","Souk El Tenine","El Kseur","Amizour","Feraoun","Tazmalt","Aïn Léger","Aokas","Beni Maouche","Chemini","Seddouk","Tichy","Kherrata"],"07 - Biskra":["Biskra","Tolga","Sidi Okba","Ouled Djellal","El Kantara","Zeribet El Oued","Foughala","Chetma","El Hadjeb","M'Chouneche","Lioua"],"08 - Béchar":["Béchar","Abadla","Beni Ounif","Lahmar","Meridja","Mogheul","Erg Ferradj","El Ouata","Igli","Tabelbala"],"09 - Blida":["Blida","Boufarik","Larbaa","Meftah","Bouinan","Bougara","Chiffa","Beni Mered","Soumaa","Oued El Alleug","El Affroun","Chréa","Hammam Melouane"],"10 - Bouira":["Bouira","Lakhdaria","M'Chedallah","Sour El Ghouzlane","Haïzer","Bordj Okhriss","Ain Bessem","El Hachimia","Kadiria","Chorfa","Bir Ghbalou"],"11 - Tamanrasset":["Tamanrasset","Abalessa","In Ghar","In Guezzam","Tin Zaouatine","Ideles"],"12 - Tébessa":["Tébessa","Cheria","El Aouinet","Bir El Ater","El Ma Labiodh","Morsott","Ouenza","Bekkaria","Hammamet"],"13 - Tlemcen":["Tlemcen","Maghnia","Ghazaouet","Remchi","Nedroma","Sebdou","Beni Mester","Aïn Tallout","Hennaya","Mansourah","Chetouane","Ain Fezza"],"14 - Tiaret":["Tiaret","Frenda","Mahdia","Sougueur","Aïn Kermes","Ksar Chellala","Rahouia","Meghila","Bougara","Zmalet El Emir Abdelkader"],"15 - Tizi Ouzou":["Tizi Ouzou","Azazga","Larbaa Nath Irathen","Draâ El Mizan","Boghni","Aïn El Hammam","Makouda","Tigzirt","Dellys","Bouzeguene","Ouacifs","Aghribs","Iferhounène"],"16 - Alger":["Alger Centre","Sidi M'Hamed","El Madania","Belouizdad","Bab El Oued","Bologhine","Casbah","Oued Koriche","Birmandreis","El Harrach","Baraki","Oued Smar","Bachdjerrah","Hussein Dey","Kouba","Bourouba","Dar El Beïda","Bab Ezzouar","Ben Aknoun","Dely Ibrahim","El Biar","Hydra","Mohammadia","Bordj El Kiffan","El Magharia","Birkhadem","El Achour","Draria","Souidania","Cheraga","Saoula","Mahelma","Rahmania","Staoueli","Zeralda","Maamar","Reghaia","Aïn Taya","Bordj El Bahri","El Marsa","Rouiba","Rais Hamidou"],"17 - Djelfa":["Djelfa","Messaad","Aïn Oussera","Hassi Bahbah","Birine","Charef","Dar Chioukh","Ain El Ibel","Faidh El Botma"],"18 - Jijel":["Jijel","El Milia","Taher","Ziama Mansouriah","El Aouana","Settara","Texenna","Boudriaa Ben Yadjis","Kaous"],"19 - Sétif":["Sétif","El Eulma","Aïn El Kebira","Aïn Oulmène","Bougaa","Amoucha","Bir El Arch","El Ouricia","Guenzet","Hammam Guergour","Maoklane","Salah Bey"],"20 - Saïda":["Saïda","Aïn El Hadjar","Youb","Sidi Boubekeur","El Hassasna","Moulay Larbi"],"21 - Skikda":["Skikda","El Harrouch","Collo","Azzaba","Tamalous","Ramdane Djamel","Ain Zouit","Ben Azzouz","Oum Toub"],"22 - Sidi Bel Abbès":["Sidi Bel Abbès","Tessala","Aïn El Berd","Telagh","Ras El Ma","Sfisef","Aïn Thrid","Ben Badis","Lamtar"],"23 - Annaba":["Annaba","Berrahal","El Bouni","El Hadjar","Aïn El Berda","Chetaïbi","Seraïdi","Oued El Aneb"],"24 - Guelma":["Guelma","Bouchegouf","Héliopolis","Oued Zenati","Aïn Makhlouf","Guelaat Bou Sbaa","Nechmaya","Houari Boumediene"],"25 - Constantine":["Constantine","El Khroub","Aïn Smara","Hamma Bouziane","Didouche Mourad","Zighoud Youcef","Ibn Ziad","Beni Hamidane"],"26 - Médéa":["Médéa","Berrouaghia","Ksar El Boukhari","Boughezoul","Ouled Antar","El Azizia","Si Mahdjoub","Sedraya","Ain Boucif"],"27 - Mostaganem":["Mostaganem","Aïn Tédelès","Aïn Nouissy","Mesra","Stidia","Hassi Mameche","Bouguirat","Kheir Eddine"],"28 - M'Sila":["M'Sila","Bou Saâda","Sidi Aïssa","Aïn El Melh","Magra","Hammam Dalaa","Ouled Derradj","Maadid","Aïn El Hadjel"],"29 - Mascara":["Mascara","Sig","Mohammadia","Bouhanifia","Aïn Fares","Tizi","Oued El Abtal","Hacine","Sidi Kada"],"30 - Ouargla":["Ouargla","Hassi Messaoud","Touggourt","Temacine","El Hadjira","Rouissat","Sidi Slimane","N'Goussa"],"31 - Oran":["Oran","Es Sénia","Bir El Djir","Aïn El Turk","Arzew","Bethioua","Mers El Kébir","Gdyel","Hassi Ben Okba","Hassi Mefsoukh","Sidi Chahmi","El Kerma","Oued Tlelat"],"32 - El Bayadh":["El Bayadh","Rogassa","Aïn El Orak","Chellala","Boussemghoun","Krakda"],"33 - Illizi":["Illizi","Djanet","In Amenas","Bordj Omar Driss"],"34 - Bordj Bou Arréridj":["Bordj Bou Arréridj","Ras El Oued","El Anseur","Bir Kasdali","Aïn Taghrout","Mansoura","Djaafra","Colla"],"35 - Boumerdès":["Boumerdès","Dellys","Khemis El Khechna","Boudouaou","Corso","Thénia","Tidjelabine","Baghlia","Beni Amrane","Isser","Si Mustapha","Zemmouri"],"36 - El Tarf":["El Tarf","Drean","El Kala","Besbes","Ben Mehdi","Bouteldja","Chefia","Ain Assel"],"37 - Tindouf":["Tindouf","Oum El Assel"],"38 - Tissemsilt":["Tissemsilt","Théniet El Had","Bordj Emir Khaled","Lardjem","Aïn Bouchekif","Lazharia"],"39 - El Oued":["El Oued","Robbah","Guemar","Debila","Kouinine","Bayadha","Reguiba","Hamraia","Taghzout","Sidi Amrane"],"40 - Khenchela":["Khenchela","Aïn Touila","Kais","Babar","Chechar","El Hamma","Ouled Rechache","Bouhmama"],"41 - Souk Ahras":["Souk Ahras","Sedrata","Aïn Zana","Mechroha","Merahna","Ouled Moumen","Haddada"],"42 - Tipaza":["Tipaza","Koléa","Hadjout","Cherchell","Aïn Tagourait","Fouka","Bou Ismaïl","Menaceur","Ahmer El Aïn","Damous","Gouraya"],"43 - Mila":["Mila","Chelghoum Laïd","Ferdjioua","Grarem Gouga","Tassadane Haddada","Ain Meloud","Oued Athmenia","Bouhatem","El Mechira"],"44 - Aïn Defla":["Aïn Defla","Khemis Miliana","El Attaf","Miliana","Aïn Bouyahia","Bordj Emir Khaled","Djendel","Oued Chorfa"],"45 - Naâma":["Naâma","Mécheria","Aïn Sefra","Tiout","Sfissifa","Djeniene Bourezg","Aïn Ben Khelil","Makman Ben Amer"],"46 - Aïn Témouchent":["Aïn Témouchent","Hammam Bouhadjar","Beni Saf","El Malah","Bouzedjar","Aghlal","Hassi El Ghella","Sidi Safi"],"47 - Ghardaïa":["Ghardaïa","Metlili","El Guerrara","Berriane","Daya Ben Dahoua","Aïn El Hadjadj","Zelfana","El Atteuf","Bounoura","Mansoura"],"48 - Relizane":["Relizane","Aïn Tarik","Mazouna","Sidi M'hamed Ben Ali","Oued Rhiou","Djidiouia","Hmadna","Yellel","Sidi Lazreug"],"49 - El M'Ghair":["El M'Ghair","Djamaa","Sidi Amrane","Still","Hassi Khalifa","Oum Touyour"],"50 - El Menia":["El Menia","El Biodh","Hassi Gara","Berezane","Hassi El Gara"],"51 - Ouled Djellal":["Ouled Djellal","Sidi Khaled","Ras El Miaad","Doucen","Chaiba"],"52 - Bordj Baji Mokhtar":["Bordj Baji Mokhtar","Timiaouine"],"53 - Béni Abbès":["Béni Abbès","Ouled Khodeïr","Béni Ikhlef","Kerzaz","Charouine"],"54 - Timimoun":["Timimoun","Aougrout","Charouine","Deldoul","Ouled Aïssa","Tinerkouk"],"55 - Touggourt":["Touggourt","Temacine","El Hadjira","Megarine","Nezla","Blidet Amor"],"56 - Djanet":["Djanet","Bordj El Haouasse"],"57 - In Salah":["In Salah","Foggaret Ez Zoua","Aoulef","Aïn Guezzam"],"58 - In Guezzam":["In Guezzam","Tin Zaouatine"]};
+
+  window.lvUpdateBaladia = function(sid) {
+    var w = document.getElementById('lv-wilaya-' + sid).value;
+    var b = document.getElementById('lv-baladia-' + sid);
+    b.innerHTML = '<option value="">— Sélectionnez votre commune —</option>';
+    if (!w || !WILAYAS[w]) { b.disabled = true; return; }
+    WILAYAS[w].forEach(function(c) {
+      var o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      b.appendChild(o);
+    });
+    b.disabled = false;
+  };
+
+  window.lvSubmit = function(sid, productName, productUrl, productPrice) {
+    var fields = [
+      { id: 'lv-prenom-' + sid, err: 'lv-e-prenom-' + sid, fn: function(v){ return v.trim().length >= 2; } },
+      { id: 'lv-nom-' + sid,    err: 'lv-e-nom-' + sid,    fn: function(v){ return v.trim().length >= 2; } },
+      { id: 'lv-wilaya-' + sid, err: 'lv-e-wilaya-' + sid, fn: function(v){ return v !== ''; } },
+      { id: 'lv-baladia-' + sid,err: 'lv-e-baladia-' + sid,fn: function(v){ return v !== ''; } },
+      { id: 'lv-taille-' + sid, err: 'lv-e-taille-' + sid, fn: function(v){ return v !== ''; } },
+      { id: 'lv-couleur-' + sid,err: 'lv-e-couleur-' + sid,fn: function(v){ return v !== ''; } },
+    ];
+    var ok = true;
+    fields.forEach(function(f) {
+      var el = document.getElementById(f.id);
+      var valid = f.fn(el.value);
+      el.classList.toggle('lv-err', !valid);
+      document.getElementById(f.err).classList.toggle('show', !valid);
+      if (!valid) ok = false;
+    });
+    var tel = document.getElementById('lv-tel-' + sid);
+    var digits = tel.value.replace(/\D/g,'');
+    var telOk = digits.length === 10 && /^0[567]/.test(digits);
+    tel.classList.toggle('lv-err', !telOk);
+    document.getElementById('lv-e-tel-' + sid).classList.toggle('show', !telOk);
+    if (!telOk) ok = false;
+    if (!ok) return;
+
+    var btn = document.getElementById('lv-btn-' + sid);
+    btn.disabled = true;
+    btn.textContent = 'Envoi en cours...';
+
+    var wilaya = document.getElementById('lv-wilaya-' + sid).value;
+    var payload = {
+      nom:           document.getElementById('lv-nom-' + sid).value.trim(),
+      prenom:        document.getElementById('lv-prenom-' + sid).value.trim(),
+      wilaya:        wilaya,
+      numero_wilaya: wilaya.split(' - ')[0],
+      baladia:       document.getElementById('lv-baladia-' + sid).value,
+      telephone:     '+213' + tel.value.trim(),
+      produit:       productName,
+      taille:        document.getElementById('lv-taille-' + sid).value,
+      couleur:       document.getElementById('lv-couleur-' + sid).value,
+      lien_produit:  productUrl,
+      prix:          productPrice
+    };
+
+    var scriptUrl = document.getElementById('lv-script-url-' + sid) ? document.getElementById('lv-script-url-' + sid).value : '';
+    if (scriptUrl && scriptUrl !== 'VOTRE_URL_ICI') {
+      fetch(scriptUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(function(){});
+    }
+
+    setTimeout(function() {
+      var rows = [
+        ['Nom', payload.prenom + ' ' + payload.nom],
+        ['Téléphone', payload.telephone],
+        ['Wilaya', payload.wilaya],
+        ['Commune', payload.baladia],
+        ['Produit', payload.produit],
+        ['Taille', payload.taille],
+        ['Couleur', payload.couleur],
+        ['Prix', payload.prix + ' DZD'],
+      ];
+      document.getElementById('lv-summary-' + sid).innerHTML = rows.map(function(r){
+        return '<div class="lv-summary-row"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>';
+      }).join('');
+      document.getElementById('lv-form-' + sid).style.display = 'none';
+      document.getElementById('lv-success-' + sid).classList.add('show');
+    }, 800);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var tel = document.getElementById('lv-tel-{{ section.id }}');
+    if (tel) tel.addEventListener('input', function(){ this.value = this.value.replace(/\D/g,''); });
+  });
+})();
+</script>
+
+<input type="hidden" id="lv-script-url-{{ section.id }}" value="{{ section.settings.google_script_url }}">
+
+{% schema %}
+{
+  "name": "Formulaire de livraison",
+  "tag": "section",
+  "class": "section-livraison",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Commander maintenant"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sous-titre",
+      "default": "Livraison dans toute l'Algérie"
+    },
+    {
+      "type": "text",
+      "id": "google_script_url",
+      "label": "URL Google Apps Script",
+      "info": "Collez ici l'URL de votre Google Apps Script pour enregistrer les commandes dans Google Sheets"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding haut",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bas",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Formulaire de livraison"
+    }
+  ]
+}
+{% endschema %}
